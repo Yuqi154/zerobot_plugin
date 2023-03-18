@@ -26,15 +26,14 @@ func init() {
 		},
 	})
 	engine.OnMessage().SetBlock(false).Handle(func(ctx *zero.Ctx) {
-		//log.Print("Loading")
 		msage := ctx.Event.Message.ExtractPlainText()
 		re := regexp.MustCompile(`https?://github\.com/\w+/\w+`)
 		match := re.MatchString(msage)
 		url := re.FindString(msage)
 		if match {
 
-			//log.Print("Loading")
-			pic := getpic(url)
+			page := browser.MustPage(url).MustWaitLoad()
+			pic := page.MustScreenshotFullPage()
 
 			re := regexp.MustCompile(`github.com/(.*)/(.*)`)
 			match := re.FindStringSubmatch(url)
@@ -46,23 +45,4 @@ func init() {
 		}
 
 	})
-}
-
-func getpic(url string) []byte {
-	// 创建一个浏览器实例
-	page := browser.MustPage(url).MustWaitLoad()
-
-	// 转到指定的网页
-
-	//log.Print("Pageget")
-	// 获取要渲染的div对象
-	//pic, err := page.MustElement("#readme").Screenshot("png", 100)
-	//if err != nil {
-	//	error.Error(err)
-	//}
-	pic := page.MustScreenshotFullPage()
-
-	//log.Print("gotpic")
-
-	return pic
 }
